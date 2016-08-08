@@ -4,6 +4,6 @@
 module.exports = {
     cookieSecret: 'myChart',
     db: 'wilsondb1',
-    host: '10.0.0.5',
+    host: '10.0.0.9',
     port: 27017
 };
