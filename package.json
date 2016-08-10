@@ -1,6 +1,6 @@
 {
   "name": "andon-bluetooth-database",
-  "version": "1.0.9",
+  "version": "1.0.19",
   "description": "",
   "main": "index.js",
   "scripts": {
