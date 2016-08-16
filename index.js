@@ -13,11 +13,6 @@ var DB_CONN_STR =  "mongodb://127.0.0.1:27017/wilsondb1";
 
 exports.init=DB_CONN_STR;
 
-//module.exports = {
-//    //DB_CONN_STR: "mongodb://10.0.0.4:27017/wilsondb1"
-//    DB_CONN_STR: DB_CONN_STR
-//};
-
 /**
  * 通用，新增操作
  * @param tablename 操作表名
@@ -108,14 +103,15 @@ exports.updataMongo = function (tablename, where, sets, callback) {
  * 通用，查询操作
  * @param tablename 操作表名
  * @param args  查询条件
+ * @param params 精确匹配
  * @callback 返回结果
  */
-exports.selectMongo = function (tablename, args, callback) {
+exports.selectMongo = function (tablename, args,params, callback) {
     var selectData = function (db, callback) {
         //连接到表
         var collection = db.collection(tablename);
         //查询数据
-        collection.find(args).toArray(function (err, result) {
+        collection.find(args,params).toArray(function (err, result) {
             if (err) {
                 console.log('Error:' + err);
                 return;
