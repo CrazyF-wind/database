@@ -107,44 +107,27 @@ exports.updataMongo = function (tablename, where, sets, callback) {
  * @callback 返回结果
  */
 exports.updateMongoWithOption = function (tablename, where, sets,option, callback) {
-    //重新连接数据库
-    if (!mongodb.openCalled) {
-        mongodb.open(function (err, db) {
+
+    var editdata = function (db, callback) {
+        //连接到表
+        var collection = db.collection(tablename);
+        //查询数据
+        collection.update(where, sets,option, function (err, result) {
             if (err) {
-                return callback(err);
+                console.log('Error:' + err);
+                return;
             }
-            //读取 posts 集合
-            db.collection(tablename, function (err, collection) {
-                if (err) {
-                    mongodb.close();
-                }
-                collection.update(where, sets,option, function (err, result) {
-                    console.log("updata MongoDB:" + JSON.stringify(result));
-                    if (err) {
-                        return callback(err);
-                    }
-                    callback("ok");
-                    mongodb.close();
-                });
-            });
+            callback('ok');
         });
     }
-    else    //数据库已连接，直接对数据进行操作
-    {
-        mongodb.collection(tablename, function (err, collection) {
-            if (err) {
-                mongodb.close();
-            }
-            collection.update(where, sets,option,function (err, result) {
-                console.log("updata MongoDB:" + JSON.stringify(result));
-                if (err) {
-                    return callback(err);
-                }
-                callback("ok");
-                mongodb.close();
-            });
+    MongoClient.connect(DB_CONN_STR, function (err, db) {
+        editdata(db, function (result) {
+            console.log("updateMongoWithOption MongoDB:" + JSON.stringify(result));
+            callback(result);
+            db.close();
         });
-    }
+    });
+    
 }
 
 
@@ -167,7 +150,7 @@ exports.selectMongo = function (tablename, args,params, callback) {
             }
             callback(result);
         });
-    }
+    };
     MongoClient.connect(DB_CONN_STR, function (err, db) {
         selectData(db, function (result) {
             console.log("select MongoDB:" + JSON.stringify(result));
@@ -175,7 +158,7 @@ exports.selectMongo = function (tablename, args,params, callback) {
             db.close();
         });
     });
-}
+};
 
 /**
  * 查询表中不同的字段
