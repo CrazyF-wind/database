@@ -9,7 +9,7 @@
 //module.exports = new Db(settings.db, new Server(settings.host, settings.port), {safe: true});
 
 var MongoClient = require('mongodb').MongoClient;
-var DB_CONN_STR =  "mongodb://10.0.0.9:27017/wilsondb1";
+var DB_CONN_STR =  "mongodb://127.0.0.1:27017/wilsondb1";
 
 exports.init=DB_CONN_STR;
 
@@ -171,6 +171,34 @@ exports.selectMongo = function (tablename, args,params, callback) {
     MongoClient.connect(DB_CONN_STR, function (err, db) {
         selectData(db, function (result) {
             console.log("select MongoDB:" + JSON.stringify(result));
+            callback(result);
+            db.close();
+        });
+    });
+}
+
+/**
+ * 查询表中不同的字段
+ * @param tablename 表名
+ * @param args 查询字段
+ * @param callback 返回值
+ */
+exports.selectdistinctMongo = function (tablename, args, callback) {
+    var selectData = function (db, callback) {
+        //连接到表
+        var collection = db.collection(tablename);
+        //查询数据
+        collection.distinct(args,function (err, result) {
+            if (err) {
+                console.log('Error:' + err);
+                return;
+            }
+            callback(result);
+        });
+    }
+    MongoClient.connect(DB_CONN_STR, function (err, db) {
+        selectData(db, function (result) {
+            console.log("select distinct MongoDB:" + JSON.stringify(result));
             callback(result);
             db.close();
         });
