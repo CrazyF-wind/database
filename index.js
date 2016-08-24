@@ -9,7 +9,7 @@
 //module.exports = new Db(settings.db, new Server(settings.host, settings.port), {safe: true});
 
 var MongoClient = require('mongodb').MongoClient;
-var DB_CONN_STR =  "mongodb://10.0.0.9:27017/wilsondb1";
+var DB_CONN_STR =  "mongodb://127.0.0.1:27017/wilsondb1";
 
 exports.init=DB_CONN_STR;
 
@@ -188,7 +188,7 @@ exports.selectdistinctMongo = function (tablename, args, callback) {
         //连接到表
         var collection = db.collection(tablename);
         //查询数据
-        collection.distinct(args).toArray(function (err, result) {
+        collection.distinct(args,function (err, result) {
             if (err) {
                 console.log('Error:' + err);
                 return;
