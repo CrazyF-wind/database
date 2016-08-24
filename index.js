@@ -9,7 +9,7 @@
 //module.exports = new Db(settings.db, new Server(settings.host, settings.port), {safe: true});
 
 var MongoClient = require('mongodb').MongoClient;
-var DB_CONN_STR =  "mongodb://127.0.0.1:27017/wilsondb1";
+var DB_CONN_STR =  "mongodb://10.0.0.9:27017/wilsondb1";
 
 exports.init=DB_CONN_STR;
 
@@ -101,6 +101,55 @@ exports.updataMongo = function (tablename, where, sets, callback) {
             db.close();
         });
     });
+}
+
+/**
+ * 通用，修改操作
+ * @param tablename 操作表名
+ * @param where 查询条件，格式：{name: 'defaulthandle'}
+ * @param sets  修改内容，格式：{$set: {value: data}}
+ * @param option upsert: <boolean>,multi: <boolean>,writeConcern: <document>
+ * @callback 返回结果
+ */
+exports.updateMongoWithOption = function (tablename, where, sets,option, callback) {
+    //重新连接数据库
+    if (!mongodb.openCalled) {
+        mongodb.open(function (err, db) {
+            if (err) {
+                return callback(err);
+            }
+            //读取 posts 集合
+            db.collection(tablename, function (err, collection) {
+                if (err) {
+                    mongodb.close();
+                }
+                collection.update(where, sets,option, function (err, result) {
+                    console.log("updata MongoDB:" + JSON.stringify(result));
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback("ok");
+                    mongodb.close();
+                });
+            });
+        });
+    }
+    else    //数据库已连接，直接对数据进行操作
+    {
+        mongodb.collection(tablename, function (err, collection) {
+            if (err) {
+                mongodb.close();
+            }
+            collection.update(where, sets,option,function (err, result) {
+                console.log("updata MongoDB:" + JSON.stringify(result));
+                if (err) {
+                    return callback(err);
+                }
+                callback("ok");
+                mongodb.close();
+            });
+        });
+    }
 }
 
 
