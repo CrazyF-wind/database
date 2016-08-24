@@ -115,7 +115,7 @@ exports.updateMongoWithOption = function (tablename, where, sets,option, callbac
         collection.update(where, sets,option, function (err, result) {
             if (err) {
                 console.log('Error:' + err);
-                return;
+                return; 
             }
             callback('ok');
         });
