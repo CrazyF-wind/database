@@ -177,6 +177,34 @@ exports.selectMongo = function (tablename, args,params, callback) {
     });
 }
 
+/**
+ * 查询表中不同的字段
+ * @param tablename 表名
+ * @param args 查询字段
+ * @param callback 返回值
+ */
+exports.selectdistinctMongo = function (tablename, args, callback) {
+    var selectData = function (db, callback) {
+        //连接到表
+        var collection = db.collection(tablename);
+        //查询数据
+        collection.distinct(args).toArray(function (err, result) {
+            if (err) {
+                console.log('Error:' + err);
+                return;
+            }
+            callback(result);
+        });
+    }
+    MongoClient.connect(DB_CONN_STR, function (err, db) {
+        selectData(db, function (result) {
+            console.log("select distinct MongoDB:" + JSON.stringify(result));
+            callback(result);
+            db.close();
+        });
+    });
+}
+
 
 
 //module.exports=insertMongo;
